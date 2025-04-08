@@ -5,8 +5,8 @@
 ### 项目列表
 
 -   **[weather-server-node](./weather-server-node/)**: 官方示例，基于 Node.js 的天气服务 MCP 服务器，提供天气预报和天气警报功能。
+-   **[simple-filesystem-server-python](./simple-filesystem-server-python/)**: 基于 Python 的简易文件系统服务器，支持多种文件操作。
 
 ### 通用安装步骤
 
 每个子项目都有自己的安装和运行说明，请参阅各个项目目录中的 README.md 文件。
-

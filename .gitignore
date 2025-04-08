@@ -47,3 +47,7 @@ coverage/
 
 # Optional eslint cache
 .eslintcache
+
+
+**/__pycache__
+**/.venv
