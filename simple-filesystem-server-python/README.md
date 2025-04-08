@@ -24,22 +24,22 @@ simple-filesystem-server-python/
 使用以下命令构建并运行项目：
 
 ```bash
-# Clone the repository
+# 克隆本项目
 git clone https://github.com/jinzcdev/mcp-demos.git
 
-# Navigate to the simple-filesystem-server-python directory
+# 进入项目目录
 cd mcp-demos/simple-filesystem-server-python
 
-# Create a virtual environment
+# 创建虚拟环境
 python -m venv .venv
 
-# Activate the virtual environment
+# 激活虚拟环境
 # On Windows:
 # .venv\Scripts\activate
 # On macOS/Linux:
 source .venv/bin/activate
 
-# Install dependencies
+# 安装依赖
 pip install -e .
 ```
 

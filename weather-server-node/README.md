@@ -31,16 +31,16 @@ weather-server-node/
 使用以下命令构建项目：
 
 ```bash
-# Clone the repository
+# 克隆本项目
 git clone https://github.com/jinzcdev/mcp-demos.git
 
-# Navigate to the weather-server-node directory
+# 进入项目目录
 cd mcp-demos/weather-server-node
 
-# Install dependencies
+# 安装依赖
 npm install
 
-# Build the project
+# 构建项目
 npm run build
 ```
 

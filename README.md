@@ -1,4 +1,4 @@
-## MCP (Model Context Protocol) 代码样例
+## 《从原理到实战：掌握 MCP》系列文章的示例代码库
 
 本仓库将在后续维护一系列使用 Model Context Protocol (MCP) 的示例项目，用于展示如何使用 MCP 协议构建应用程序。
 
