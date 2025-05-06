@@ -6,6 +6,7 @@
 
 -   **[weather-server-node](./weather-server-node/)**: 官方示例，基于 Node.js 的天气服务 MCP 服务器，提供天气预报和天气警报功能。
 -   **[simple-filesystem-server-python](./simple-filesystem-server-python/)**: 基于 Python 的简易文件系统服务器，支持多种文件操作。
+-   **[mcp-client-demo](./mcp-client-demo/)**: MCP 客户端示例，创建多个 MCP 连接并打印各服务器的可用工具。
 
 ### 通用安装步骤
 

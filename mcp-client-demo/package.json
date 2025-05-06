@@ -1,0 +1,20 @@
+{
+  "name": "mcp-client-demo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc && chmod 755 build/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.11.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.12",
+    "typescript": "^5.8.3"
+  }
+}
