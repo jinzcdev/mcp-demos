@@ -5,6 +5,8 @@ import os.path as osp
 import argparse
 import shutil
 import difflib
+import json
+import fnmatch
 
 
 parser = argparse.ArgumentParser(description="Simple File System MCP Server")
@@ -21,7 +23,7 @@ mcp = FastMCP("SimpleFileSystemMCPServer", log_level="ERROR")
 
 
 @mcp.tool(
-    description="Get a detailed listing of all files and directories in a specified path. Results clearly distinguish between files and directories with [DIR] and [FILE] prefixes. This tool is essential for understanding directory structure and finding specific files within a directory. Only works within allowed directories."
+    description="Get a detailed listing of all files and directories in a specified path. Results clearly distinguish between files and directories with [FILE] and [DIR] prefixes. This tool is essential for understanding directory structure and finding specific files within a directory. Only works within allowed directories."
 )
 async def list_directory(dir_path) -> str:
     """
@@ -50,7 +52,7 @@ async def list_directory(dir_path) -> str:
 
 
 @mcp.tool(
-    description="Read the complete contents of a file from the file system. Handles various text encodings and provides detailed error messages if the file cannot be read or accessed. Use this tool when you need to examine the complete contents of a single file. Only works within allowed directories."
+    description="Read the complete contents of a file from the file system. Handles various text encodings and provides detailed error messages if the file cannot be read. Use this tool when you need to examine the contents of a single file. Only works within allowed directories."
 )
 async def read_file(file_path) -> str:
     """
@@ -125,7 +127,7 @@ async def read_multiple_files(file_paths) -> str:
 
 
 @mcp.tool(
-    description="Make line-based edits to a text file. Each edit replaces exact text sequences with new content. Returns a unified diff showing the changes made. If dryRun is True, returns the diff without actually making changes. Only works within allowed directories."
+    description="Make line-based edits to a text file. Each edit replaces exact line sequences with new content. Returns a git-style diff showing the changes made. Only works within allowed directories."
 )
 async def edit_file(file_path, edits, dry_run=False) -> str:
     """
@@ -246,7 +248,7 @@ async def get_file_info(file_path) -> dict:
 
 
 @mcp.tool(
-    description="Returns the list of root directories that this server is allowed to access. Use this to understand which directories are available before trying to access files."
+    description="Returns the list of directories that this server is allowed to access. Use this to understand which directories are available before trying to access files."
 )
 async def list_allowed_directories() -> list:
     """
@@ -256,6 +258,76 @@ async def list_allowed_directories() -> list:
         List of allowed directory paths
     """
     return allowed_directories
+
+
+@mcp.tool(
+    description="Get a recursive tree view of files and directories as a JSON structure. Each entry includes 'name', 'type' (file/directory), and 'children' for directories. Files have no children array, while directories always have a children array (which may be empty). The output is formatted with 2-space indentation for readability. Only works within allowed directories."
+)
+async def directory_tree(dir_path) -> str:
+    """
+    Generate a recursive tree view of files and directories
+
+    Args:
+        dir_path: The path of the directory to start the tree from
+    Returns:
+        JSON string with a tree structure of files and directories
+    Raises:
+        ValueError: If the directory path is not within allowed directories or doesn't exist
+    """
+    if not osp.exists(dir_path) or not osp.isdir(dir_path):
+        raise ValueError(f"{dir_path} is not a valid directory")
+
+    def build_tree(path):
+        name = osp.basename(path)
+        if osp.isfile(path):
+            return {"name": name, "type": "file"}
+        elif osp.isdir(path):
+            children = []
+            try:
+                entries = os.listdir(path)
+                for entry in sorted(entries):
+                    entry_path = osp.join(path, entry)
+                    children.append(build_tree(entry_path))
+            except PermissionError:
+                # Handle permission errors gracefully
+                pass
+            return {"name": name, "type": "directory", "children": children}
+
+    tree = build_tree(dir_path)
+    return json.dumps(tree, indent=2)
+
+
+@mcp.tool(
+    description="Recursively search for files and directories matching a pattern. Searches through all subdirectories from the starting path. The search is case-insensitive and matches partial names. Returns full paths to all matching items. Great for finding files when you don't know their exact location. Only searches within allowed directories."
+)
+async def search_files(start_path, pattern) -> list:
+    """
+    Search for files and directories matching a pattern
+
+    Args:
+        start_path: The directory to start searching from
+        pattern: The pattern to match (case-insensitive)
+    Returns:
+        List of full paths to all matching files and directories
+    Raises:
+        ValueError: If the starting path is not within allowed directories or doesn't exist
+    """
+    if not osp.exists(start_path) or not osp.isdir(start_path):
+        raise ValueError(f"{start_path} is not a valid directory")
+
+    matches = []
+    for root, dirnames, filenames in os.walk(start_path):
+        # Search in directory names
+        for dirname in dirnames:
+            if fnmatch.fnmatch(dirname.lower(), pattern.lower()):
+                matches.append(osp.join(root, dirname))
+
+        # Search in file names
+        for filename in filenames:
+            if fnmatch.fnmatch(filename.lower(), pattern.lower()):
+                matches.append(osp.join(root, filename))
+
+    return matches
 
 
 if __name__ == "__main__":
